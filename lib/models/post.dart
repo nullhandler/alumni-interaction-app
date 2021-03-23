@@ -14,17 +14,20 @@ class Post {
         this.category,
         this.id,
         this.author,
+        this.createdAt,
     });
 
     String title;
     String category;
     int id;
+    DateTime createdAt;
     Author author;
 
     factory Post.fromJson(Map<String, dynamic> json) => Post(
         title: json["title"] == null ? null : json["title"],
         category: json["category"] == null ? null : json["category"],
         id: json["id"] == null ? null : json["id"],
+        createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
         author: json["author"] == null ? null : Author.fromJson(json["author"]),
     );
 

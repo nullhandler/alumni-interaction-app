@@ -49,23 +49,28 @@ class _CreatePostState extends State<CreatePost> {
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        body: Card(
-          margin: EdgeInsets.all(20),
-          elevation: 5,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.all(20),
-              children: <Widget>[
-                buildTitleField('Type title/paste a link here *'),
-                buildCategoryField('Select Category'),
-                buildDescriptionField('Description *'),
-                createPostButton()
-              ],
-            ),
-          ),
-        ));
+        body: _isloading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Card(
+                margin: EdgeInsets.all(20),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(20),
+                    children: <Widget>[
+                      buildTitleField('Title'),
+                      buildCategoryField('Select Category'),
+                      buildDescriptionField('Description'),
+                      createPostButton()
+                    ],
+                  ),
+                ),
+              ));
   }
 
   Widget buildTitleField(String label) {
@@ -105,11 +110,10 @@ class _CreatePostState extends State<CreatePost> {
         ],
       ),
       onPressed: () {
-        if (!_formKey.currentState.validate()) {
-          return;
+        if (_formKey.currentState.validate()) {
+          _formKey.currentState.save();
+          postTopic(context);
         }
-        _formKey.currentState.save();
-        postTopic(context);
       },
     );
   }
@@ -236,16 +240,14 @@ class _CreatePostState extends State<CreatePost> {
     if (_title.isEmpty || _description.isEmpty) {
       return null;
     }
-    setState(() {
-      requestBody = {
-        'title': _title,
-        'content': _description,
-        'category': selectedCategory,
-      };
-      headers = {
-        'token': widget.token,
-      };
-    });
+    requestBody = {
+      'title': _title,
+      'content': _description,
+      'category': selectedCategory,
+    };
+    headers = {
+      'token': widget.token,
+    };
     setState(() {
       _isloading = true;
     });
@@ -253,6 +255,9 @@ class _CreatePostState extends State<CreatePost> {
         await http.post(CREATE_POST, headers: headers, body: requestBody);
     responseBody = json.decode(response.body);
     print(responseBody);
+    setState(() {
+      _isloading = false;
+    });
     if (!responseBody['success']) {
       showDialog(
           context: context,

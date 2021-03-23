@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_forum/screens/post_detail.dart';
 import 'package:flutter_forum/screens/create_post.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ListPost extends StatefulWidget {
   String token;
@@ -40,7 +41,7 @@ class _ListPostState extends State<ListPost> {
   Widget build(BuildContext context) {
     _deviceSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text('Flutter Forum'), actions: <Widget>[
+      appBar: AppBar(title: Text('SCAD Forum'), actions: <Widget>[
         IconButton(
           icon: Icon(
             Icons.create,
@@ -78,8 +79,23 @@ class _ListPostState extends State<ListPost> {
                       ListTile(
                         leading: profileLogo(BASE_URL + post.author.photo),
                         title: Text(post.title),
-                        subtitle:
+                        subtitle: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text("In ${post.category} By ${post.author.name}"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago.format(post.createdAt),
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 12),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ]))));
   }
