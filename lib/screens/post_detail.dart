@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_forum/constants/url.dart';
 import 'package:flutter_forum/models/post.dart' as p;
 import 'package:flutter_forum/models/postdetail.dart';
+import 'package:flutter_forum/screens/profile.dart';
 import 'package:flutter_forum/widgets/error_dialog.dart';
 import 'package:flutter_forum/widgets/loading_dialog.dart';
 import 'package:http/http.dart' as http;
@@ -39,8 +40,8 @@ class _PostDetailState extends State<PostDetail> {
             .replace(queryParameters: {'postId': postId.toString()}),
         headers: {'token': widget.token});
     var js = jsonDecode(res.body);
+    print(js);
     if (js['success']) {
-      print(js);
       setState(() {
         postDetail = postDetailFromJson(js['post']);
         topic_title = postDetail.title;
@@ -128,6 +129,13 @@ class _PostDetailState extends State<PostDetail> {
   Widget getMainPost() {
     return Card(
         child: ListTile(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ProfileScreen(widget.token, postDetail.author.phone)));
+      },
       leading: CircleAvatar(
         backgroundImage:
             CachedNetworkImageProvider(BASE_URL + postDetail.author.photo),
@@ -165,6 +173,13 @@ class _PostDetailState extends State<PostDetail> {
   Widget get_post(Comment comment) {
     return Card(
         child: ListTile(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ProfileScreen(widget.token, comment.author.phone)));
+      },
       leading: CircleAvatar(
         backgroundImage:
             CachedNetworkImageProvider(BASE_URL + comment.author.photo),
